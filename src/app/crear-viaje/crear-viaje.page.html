@@ -1,0 +1,50 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button default-href="/" text="Volver"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Crear Viaje</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Datos del Viaje</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <form [formGroup]="formularioViaje">
+              <!-- Campo: Origen -->
+              <ion-item>
+                <ion-label position="floating" class="text-bold">Origen</ion-label>
+                <br>
+                <ion-input formControlName="origen" type="text" placeholder="Ingresa dirección origen del viaje"></ion-input>
+              </ion-item>
+
+              <!-- Campo: Destino -->
+              <ion-item>
+                <ion-label position="floating" class="text-bold">Destino</ion-label>
+                <br>
+                <ion-input formControlName="destino" type="text" placeholder="Ingresa dirección destino del viaje"></ion-input>
+              </ion-item>
+
+              <!-- Campo: Precio -->
+              <ion-item>
+                <ion-label position="floating" class="text-bold">Precio</ion-label>
+                <br>
+                <ion-input formControlName="precio" type="number" placeholder="Ingresa el precio del viaje"></ion-input>
+              </ion-item>
+
+              <!-- Botón para crear el viaje -->
+              <ion-button expand="full" type="submit" (click)="crearViaje()">Crear Viaje</ion-button>
+            </form>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
