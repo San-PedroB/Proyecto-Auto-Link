@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { ModalController, ToastController} from '@ionic/angular';
 
-import { ModalLoginComponent } from '../modal-login/modal-login.component';
-import { FormularioService } from '../services/formulario.service'; // Importar servicio del formulario guardado OJO
+
+import { ModalLoginComponent } from '../../components/modal-login/modal-login.component';
+import { FormularioService } from '../../services/formulario.service'; // Importar servicio del formulario guardado OJO
 
 
 @Component({
@@ -29,7 +30,8 @@ export class LoginPage implements OnInit {
       const toastErrorCampos = await this.toastController.create({
         message: "Porfavor completa correctamente todos los campos", 
         duration: 3000,
-        position: 'bottom'
+        position: 'bottom',
+        color: 'danger'
       });
       await toastErrorCampos.present();
       return;
@@ -42,7 +44,8 @@ export class LoginPage implements OnInit {
         const toastErrorUsuario = await this.toastController.create({
           message: "Correo o contraseña incorrectos. Por favor, intenta nuevamente.",
           duration: 3000,
-          position: 'top'
+          position: 'top',
+          color: 'danger'
         })
         await toastErrorUsuario.present();
         return;
@@ -54,7 +57,8 @@ export class LoginPage implements OnInit {
 
    async abrirModalLogin(){
     const modal = await this.modalController.create({
-      component: ModalLoginComponent
+      component: ModalLoginComponent,
+      cssClass: 'custom-modal-class',
     })
     return await modal.present();
    }

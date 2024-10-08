@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { RolUsuarioService } from '../services/rol-usuario.service';  // Importa el servicio de rol
+import { RolUsuarioService } from '../../services/rol-usuario.service';  // Importa el servicio de rol
 
 @Component({
   selector: 'app-modal-login',

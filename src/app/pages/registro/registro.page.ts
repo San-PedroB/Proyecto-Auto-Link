@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl} from '@angular/forms';
 import { ToastController, ModalController, NavController } from '@ionic/angular';
-import { FormularioService } from '../services/formulario.service'; // Importar el servicio
+import { FormularioService } from '../../services/formulario.service'; // Importar el servicio
 
 
 @Component({

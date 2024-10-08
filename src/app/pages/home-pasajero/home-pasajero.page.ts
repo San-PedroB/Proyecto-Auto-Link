@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController, ToastController} from '@ionic/angular';
-import { ModalLoginComponent } from '../modal-login/modal-login.component';
+import { ModalLoginComponent } from '../../components/modal-login/modal-login.component';
 import { Router } from '@angular/router';
-import { FormularioService } from '../services/formulario.service'; // Importar el servicio
+import { FormularioService } from '../../services/formulario.service'; // Importar el servicio
 
 @Component({
   selector: 'app-home-pasajero',

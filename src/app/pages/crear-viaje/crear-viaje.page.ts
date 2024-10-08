@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl} from '@angular/forms';
-import { ServicioViajesService } from '../services/servicio-viajes.service'; // Importa el servicio de viajes
+import { ServicioViajesService } from '../../services/servicio-viajes.service'; // Importa el servicio de viajes
 import { ToastController, NavController } from '@ionic/angular'; // Para mostrar mensajes Toast
 
 @Component({
