@@ -1,10 +1,9 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { ModalController, NavController, ToastController} from '@ionic/angular';
-
+import { FirestoreService } from '../../services/firestore/firestore.service';
 
 import { ModalLoginComponent } from '../../components/modal-login/modal-login.component';
-import { LoginService } from '../../services/login.service';
 
 
 @Component({
@@ -23,14 +22,25 @@ export class LoginPage implements OnInit {
 
   
   constructor(public fb: FormBuilder, private toastController: ToastController, private modalController: ModalController,
-     private loginService: LoginService ) {
+    private firestoreService: FirestoreService
+   ) {
     this.formularioLogin = this.fb.group({
       "email": new FormControl("", [Validators.required, Validators.email]),
       "password": new FormControl("", Validators.required)
     })
    }
 
-   async login(){
+   async autenticarUsuario(){
+    const dataEmail = await this.firestoreService.getDocumentByQuery(
+      'users',
+      'email',
+      this.formularioLogin.value.email
+    );
+    const dataPassword = await this.firestoreService.getDocumentByQuery(
+      'users',
+      'password',
+      this.formularioLogin.value.password
+    );
     if(this.formularioLogin.invalid){
       const toastErrorCampos = await this.toastController.create({
         message: "Porfavor completa correctamente todos los campos", 
@@ -41,11 +51,11 @@ export class LoginPage implements OnInit {
       await toastErrorCampos.present();
       return;
     }
-
     this.abrirModalLogin();
     
    }
    
+
    async abrirModalLogin(){
     const modal = await this.modalController.create({
       component: ModalLoginComponent,
