@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormularioService } from '../services/formulario.service'; // Importar el servicio
+import { FormularioService } from '../../services/formulario.service'; // Importar el servicio
 
 @Component({
   selector: 'app-perfil-usuario',

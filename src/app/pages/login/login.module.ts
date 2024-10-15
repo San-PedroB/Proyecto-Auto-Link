@@ -7,7 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { LoginPageRoutingModule } from './login-routing.module';
 
 import { LoginPage } from './login.page';
-import { ModalLoginComponent } from '../modal-login/modal-login.component'; // Importa el modal
+import { ModalLoginComponent } from '../../components/modal-login/modal-login.component'; // Importa el modal
 
 
 @NgModule({

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { RolUsuarioService } from '../services/rol-usuario.service'; // Servicio de rol de usuario
-import { ServicioViajesService } from '../services/servicio-viajes.service'; // Servicio de viajes
+import { RolUsuarioService } from '../../services/rol-usuario.service'; // Servicio de rol de usuario
+import { ServicioViajesService } from '../../services/servicio-viajes.service'; // Servicio de viajes
 import { ToastController } from '@ionic/angular'; // Para mostrar mensajes Toast
 
 @Component({
@@ -40,7 +40,7 @@ export class ViajesEnCursoPage implements OnInit {
     const toast = await this.toastController.create({
       message: 'El viaje ha sido terminado.',
       duration: 2000,
-      position: 'bottom'
+      position: 'top'
     });
     await toast.present();
   }
@@ -52,7 +52,7 @@ export class ViajesEnCursoPage implements OnInit {
     const toast = await this.toastController.create({
       message: 'Has tomado el viaje.',
       duration: 2000,
-      position: 'bottom'
+      position: 'top'
 
     });
     await toast.present();

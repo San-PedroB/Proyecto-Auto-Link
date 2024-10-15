@@ -9,38 +9,35 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
+    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule)
   },
   {
     path: 'home-conductor',
-    loadChildren: () => import('./home-conductor/home-conductor.module').then( m => m.HomeConductorPageModule)
+    loadChildren: () => import('./pages/home-conductor/home-conductor.module').then( m => m.HomeConductorPageModule)
   },
   {
     path: 'home-pasajero',
-    loadChildren: () => import('./home-pasajero/home-pasajero.module').then( m => m.HomePasajeroPageModule)
+    loadChildren: () => import('./pages/home-pasajero/home-pasajero.module').then( m => m.HomePasajeroPageModule)
   },
   {
     path: 'registro',
-    loadChildren: () => import('./registro/registro.module').then( m => m.RegistroPageModule)
+    loadChildren: () => import('./pages/registro/registro.module').then( m => m.RegistroPageModule)
   },
   {
     path: 'perfil-usuario',
-    loadChildren: () => import('./perfil-usuario/perfil-usuario.module').then( m => m.PerfilUsuarioPageModule)
+    loadChildren: () => import('./pages/perfil-usuario/perfil-usuario.module').then( m => m.PerfilUsuarioPageModule)
   },
   {
     path: 'crear-viaje',
-    loadChildren: () => import('./crear-viaje/crear-viaje.module').then( m => m.CrearViajePageModule)
+    loadChildren: () => import('./pages/crear-viaje/crear-viaje.module').then( m => m.CrearViajePageModule)
   },
   {
     path: 'viajes-en-curso',
-    loadChildren: () => import('./viajes-en-curso/viajes-en-curso.module').then( m => m.ViajesEnCursoPageModule)
+    loadChildren: () => import('./pages/viajes-en-curso/viajes-en-curso.module').then( m => m.ViajesEnCursoPageModule)
   },
   {
     path: 'cambiar-password',
-    loadChildren: () => import('./cambiar-password/cambiar-password.module').then( m => m.CambiarPasswordPageModule)
-  },  {
-    path: 'prueba',
-    loadChildren: () => import('./prueba/prueba.module').then( m => m.PruebaPageModule)
+    loadChildren: () => import('./pages/cambiar-password/cambiar-password.module').then( m => m.CambiarPasswordPageModule)
   },
 
 ];
