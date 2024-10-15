@@ -10,6 +10,7 @@ import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { getFirestore } from 'firebase/firestore';
 import { provideFirestore } from '@angular/fire/firestore';
 import { environment } from 'src/environments/environment.prod';
+import { provideHttpClient } from '@angular/common/http';
 
 @NgModule({
   declarations: [AppComponent],
@@ -18,6 +19,7 @@ import { environment } from 'src/environments/environment.prod';
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
     provideFirestore(() => getFirestore()),
+    provideHttpClient(), //agregar esta ultima para las APIS
   ],
   bootstrap: [AppComponent],
 })
