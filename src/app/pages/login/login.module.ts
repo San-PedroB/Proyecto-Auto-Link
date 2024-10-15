@@ -18,6 +18,7 @@ import { ModalLoginComponent } from '../../components/modal-login/modal-login.co
     ReactiveFormsModule,
     LoginPageRoutingModule
   ],
-  declarations: [LoginPage, ModalLoginComponent,]
+  declarations: [LoginPage, ModalLoginComponent,],
+  exports: [LoginPage, ModalLoginComponent] // Exporta si es necesario
 })
 export class LoginPageModule {}

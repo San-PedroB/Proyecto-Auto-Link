@@ -10,7 +10,7 @@ import {
   ModalController,
   NavController,
 } from '@ionic/angular';
-import { FormularioService } from '../../services/formulario.service'; // Importar el servicio
+
 
 import { FirestoreService } from '../../services/firestore/firestore.service';
 
@@ -26,7 +26,6 @@ export class RegistroPage implements OnInit {
     public modalController: ModalController,
     public fb: FormBuilder,
     private toastController: ToastController,
-    private formularioService: FormularioService,
     private navController: NavController,
     private firestoreService: FirestoreService
   ) {
@@ -54,10 +53,27 @@ export class RegistroPage implements OnInit {
 
   async enviarFormulario() {
     if (this.formularioRegistro.valid) {
+      const data = await this.firestoreService.getDocumentByQuery(
+        'users',
+        'email',
+        this.formularioRegistro.value.email
+      );
+      if (data){
+        const toastError = await this.toastController.create({
+          message: 'El correo ya esta registrado',
+          duration: 3000,
+          position: 'bottom',
+          color: 'danger'
+        });
+        await toastError.present();
+        return;
+      }
+
       await this.firestoreService.createDocument(
         'users', //nombre de la coleccion
         this.formularioRegistro.value
       );
+
       console.log('Datos guardados:', this.formularioRegistro.value);
       const toastRegistro = await this.toastController.create({
         message: '¡Usuario creado exitosamente!',

@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
-import { ModalController, ToastController} from '@ionic/angular';
+import { ModalController, NavController, ToastController} from '@ionic/angular';
 
 
 import { ModalLoginComponent } from '../../components/modal-login/modal-login.component';
-import { FormularioService } from '../../services/formulario.service'; // Importar servicio del formulario guardado OJO
+import { LoginService } from '../../services/login.service';
 
 
 @Component({
@@ -15,17 +15,22 @@ import { FormularioService } from '../../services/formulario.service'; // Import
 export class LoginPage implements OnInit {
 
   formularioLogin: FormGroup;
+
+  usuario: string = "";
+  password: string = "";
+
+  navController = inject(NavController);
+
   
   constructor(public fb: FormBuilder, private toastController: ToastController, private modalController: ModalController,
-     private formularioService: FormularioService ) {
+     private loginService: LoginService ) {
     this.formularioLogin = this.fb.group({
       "email": new FormControl("", [Validators.required, Validators.email]),
       "password": new FormControl("", Validators.required)
     })
    }
-   
-   async iniciarSesion(){
-    // Validación del formulario
+
+   async login(){
     if(this.formularioLogin.invalid){
       const toastErrorCampos = await this.toastController.create({
         message: "Porfavor completa correctamente todos los campos", 
@@ -36,25 +41,11 @@ export class LoginPage implements OnInit {
       await toastErrorCampos.present();
       return;
     }
-     // Obtener los datos almacenados del formulario de registro
-     const datosAlmacenados = this.formularioService.getDatos(); // Aseguurate de que "setDatos" haya guardado antes
-     // Compara el email ingresado con el almacenado en el servicio
-    if(this.formularioLogin.value.email != datosAlmacenados.email || 
-      this.formularioLogin.value.password != datosAlmacenados.password){
-        const toastErrorUsuario = await this.toastController.create({
-          message: "Correo o contraseña incorrectos. Por favor, intenta nuevamente.",
-          duration: 3000,
-          position: 'top',
-          color: 'danger'
-        })
-        await toastErrorUsuario.present();
-        return;
-    }
 
-    console.log("Iniciando Sesion...");
     this.abrirModalLogin();
+    
    }
-
+   
    async abrirModalLogin(){
     const modal = await this.modalController.create({
       component: ModalLoginComponent,
