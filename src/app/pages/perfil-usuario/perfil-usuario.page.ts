@@ -18,7 +18,7 @@ export class PerfilUsuarioPage implements OnInit {
     // Verificar si los datos se cargan correctamente
     console.log('Datos del usuario:', this.datosFormulario);
   }
-  ionViewDidEnter() {
+  ionViewWillEnter() {
     const cardElement = document.querySelector('.perfil-card'); // Selecciona el elemento
     if (cardElement) {
       const fadeAnimation = this.animationCtrl.create()
