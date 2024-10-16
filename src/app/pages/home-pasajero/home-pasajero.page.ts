@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController, ToastController} from '@ionic/angular';
+import { AnimationController, ModalController, ToastController} from '@ionic/angular';
 import { ModalLoginComponent } from '../../components/modal-login/modal-login.component';
 import { Router } from '@angular/router';
 import { FormularioService } from '../../services/formulario.service'; // Importar el servicio
@@ -12,7 +12,7 @@ import { FormularioService } from '../../services/formulario.service'; // Import
 export class HomePasajeroPage implements OnInit {
   datosFormulario: any = {}
 
-  constructor(private modalController: ModalController, private router: Router, private formularioService: FormularioService) {
+  constructor(private modalController: ModalController, private router: Router, private formularioService: FormularioService, private animationCtrl: AnimationController) {
     
   }
 
@@ -34,6 +34,16 @@ export class HomePasajeroPage implements OnInit {
     console.log('Datos del usuario:', this.datosFormulario);
   }
 
-
+  ionViewDidEnter() {
+    const nameElement = document.querySelector('.fade'); // Seleccionar el elemento
+    if (nameElement) {
+      const fadeAnimation = this.animationCtrl.create()
+        .addElement(nameElement)
+        .duration(500)
+        .fromTo('opacity', 0, 1); // Desde opacidad 0 a 1
+      
+      fadeAnimation.play();
+    }
+  }
 
 }

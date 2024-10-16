@@ -12,6 +12,7 @@ import { provideFirestore } from '@angular/fire/firestore';
 import { environment } from 'src/environments/environment.prod';
 import { provideHttpClient } from '@angular/common/http';
 
+
 @NgModule({
   declarations: [AppComponent],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule],
