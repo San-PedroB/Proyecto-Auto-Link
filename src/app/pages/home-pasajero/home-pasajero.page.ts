@@ -34,7 +34,7 @@ export class HomePasajeroPage implements OnInit {
     console.log('Datos del usuario:', this.datosFormulario);
   }
 
-  ionViewDidEnter() {
+  ionViewWillEnter() {
     const nameElement = document.querySelector('.fade'); // Seleccionar el elemento
     if (nameElement) {
       const fadeAnimation = this.animationCtrl.create()
