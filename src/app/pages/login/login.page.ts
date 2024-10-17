@@ -6,6 +6,7 @@ import {
   FormBuilder,
 } from '@angular/forms';
 import {
+  AnimationController,
   ModalController,
   NavController,
   ToastController,
@@ -31,7 +32,8 @@ export class LoginPage implements OnInit {
     public fb: FormBuilder,
     private toastController: ToastController,
     private modalController: ModalController,
-    private firestoreService: FirestoreService
+    private firestoreService: FirestoreService,
+    private animationCtrl: AnimationController
   ) {
     this.formularioLogin = this.fb.group({
       email: new FormControl('', [Validators.required, Validators.email]),
@@ -69,6 +71,18 @@ export class LoginPage implements OnInit {
       cssClass: 'custom-modal-class',
     });
     return await modal.present();
+  }
+
+  ionViewWillEnter() {
+    const img = document.querySelector('.fade'); // Selecciona el elemento
+    if (img) {
+      const fadeAnimation = this.animationCtrl.create()
+        .addElement(img)
+        .duration(1000)
+        .fromTo('opacity', 0, 1); // Animación de opacidad
+    
+      fadeAnimation.play();
+    }
   }
 
   ngOnInit() {}

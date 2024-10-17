@@ -34,12 +34,12 @@ export class HomeConductorPage implements OnInit {
     console.log('Datos del usuario:', this.datosFormulario);
   }
 
-  ionViewDidEnter() {
+  ionViewWillEnter() {
     const nameElement = document.querySelector('.fade'); // Seleccionar el elemento
     if (nameElement) {
       const fadeAnimation = this.animationCtrl.create()
         .addElement(nameElement)
-        .duration(500)
+        .duration(1000)
         .fromTo('opacity', 0, 1); // Desde opacidad 0 a 1
       
       fadeAnimation.play();

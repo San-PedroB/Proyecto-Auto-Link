@@ -17,7 +17,7 @@ export class CrearViajePage implements OnInit {
     public fb: FormBuilder,
     private toastController: ToastController,
     private navController: NavController
-  ) {
+    ) {
     this.formularioViaje = this.fb.group({
       "origen": new FormControl("", Validators.required),
       "destino": new FormControl("", Validators.required),
