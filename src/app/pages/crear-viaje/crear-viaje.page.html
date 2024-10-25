@@ -20,24 +20,41 @@
             <form [formGroup]="formularioViaje">
               <!-- Campo: Origen -->
               <ion-item>
-                <ion-label position="floating" class="text-bold">Origen</ion-label>
+                <ion-label position="floating">Origen</ion-label>
                 <br>
                 <ion-input formControlName="origen" type="text" placeholder="Ingresa dirección origen del viaje"></ion-input>
               </ion-item>
 
               <!-- Campo: Destino -->
               <ion-item>
-                <ion-label position="floating" class="text-bold">Destino</ion-label>
+                <ion-label position="floating">Destino</ion-label>
                 <br>
                 <ion-input formControlName="destino" type="text" placeholder="Ingresa dirección destino del viaje"></ion-input>
               </ion-item>
 
               <!-- Campo: Precio -->
               <ion-item>
-                <ion-label position="floating" class="text-bold">Precio</ion-label>
+                <ion-label position="floating">Precio</ion-label>
                 <br>
                 <ion-input formControlName="precio" type="number" placeholder="Ingresa el precio del viaje"></ion-input>
               </ion-item>
+              <br>
+              <!-- Campo: Cantidad pasajeros -->
+               
+              <ion-item>
+                <ion-label position="floating" style="font-size: 1.25em">Capacidad de pasajeros</ion-label>
+                <ion-range formControlName="cantidadPasajeros" min="1" max="10" step="1" snaps="true" ticks="true" pin="true">
+                  <ion-label slot="start">1</ion-label>
+                  <ion-label slot="end">10</ion-label>
+                </ion-range>
+              </ion-item>
+              
+              <!-- Muestra el valor seleccionado -->
+              <br>
+              <p style="text-align: center; font-size: 1.2em">
+                Pasajeros que puedes llevar: {{ formularioViaje.get('cantidadPasajeros')?.value || 1 }}
+              </p>
+              <br>
 
               <!-- Botón para crear el viaje -->
               <ion-button expand="full" type="submit" (click)="crearViaje()">Crear Viaje</ion-button>

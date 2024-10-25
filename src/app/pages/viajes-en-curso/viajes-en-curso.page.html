@@ -22,6 +22,7 @@
             <p><strong>Origen:</strong> Origen Falso 1</p>
             <p><strong>Destino:</strong> Destino Falso 1</p>
             <p><strong>Precio:</strong> $1000</p>
+            <ion-button *ngIf="esPasajero" expand="full" color="success" (click)="tomarViaje()">Tomar Viaje</ion-button>
           </ion-card-content>
         </ion-card>
 
@@ -33,20 +34,23 @@
             <p><strong>Origen:</strong> Origen Falso 2</p>
             <p><strong>Destino:</strong> Destino Falso 2</p>
             <p><strong>Precio:</strong> $1500</p>
+            <ion-button *ngIf="esPasajero" expand="full" color="success" (click)="tomarViaje()">Tomar Viaje</ion-button>
           </ion-card-content>
         </ion-card>
 
         <!-- Viaje creado solo si los datos están completos -->
-        <ion-card *ngIf="viaje">
-          <ion-card-header>Tu viaje</ion-card-header>
+        <ion-card *ngIf="viajeEnCurso">
+          <ion-card-header *ngIf="esConductor" >Tu viaje</ion-card-header>
           <ion-card-header>
-            <ion-card-title>{{ viaje.value.origen }} → {{ viaje.value.destino }}</ion-card-title>
+            <ion-card-title>{{ viajeEnCurso.value.origen }} → {{ viajeEnCurso.value.destino }}</ion-card-title>
           </ion-card-header>
 
           <ion-card-content>
-            <p><strong>Origen:</strong> {{ viaje.value.origen }}</p>
-            <p><strong>Destino:</strong> {{ viaje.value.destino }}</p>
-            <p><strong>Precio:</strong> ${{ viaje.value.precio}}</p>
+            <p><strong>Origen:</strong> {{ viajeEnCurso.value.origen }}</p>
+            <p><strong>Destino:</strong> {{ viajeEnCurso.value.destino }}</p>
+            <p><strong>Precio:</strong> ${{ viajeEnCurso.value.precio}}</p>
+            <p *ngIf="esPasajero"><strong>Pasajeros Disponibles:</strong> {{ viajeEnCurso.value.cantidadPasajeros}}</p>
+            <p *ngIf="esConductor"><strong>Cantiad de Pasajeros:</strong> {{ viajeEnCurso.value.cantidadPasajeros}}</p>
 
             <!-- Botón "Tomar Viaje" si es pasajero -->
             <ion-button *ngIf="esPasajero" expand="full" color="success" (click)="tomarViaje()">Tomar Viaje</ion-button>

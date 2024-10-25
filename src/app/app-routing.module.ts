@@ -38,7 +38,11 @@ const routes: Routes = [
   {
     path: 'cambiar-password',
     loadChildren: () => import('./pages/cambiar-password/cambiar-password.module').then( m => m.CambiarPasswordPageModule)
+  },  {
+    path: 'viaje-actual',
+    loadChildren: () => import('./pages/viaje-actual/viaje-actual.module').then( m => m.ViajeActualPageModule)
   },
+
 
 ];
 

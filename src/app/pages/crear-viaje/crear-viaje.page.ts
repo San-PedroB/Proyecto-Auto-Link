@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl} from '@angular/forms';
+import { ToastController, NavController } from '@ionic/angular';
+
 import { ServicioViajesService } from '../../services/servicio-viajes.service'; // Importa el servicio de viajes
-import { ToastController, NavController } from '@ionic/angular'; // Para mostrar mensajes Toast
 
 @Component({
   selector: 'app-crear-viaje',
@@ -11,17 +12,18 @@ import { ToastController, NavController } from '@ionic/angular'; // Para mostrar
 export class CrearViajePage implements OnInit {
 
   formularioViaje: FormGroup;
-
+        
   constructor(
     private servicioViajes: ServicioViajesService,
-    public fb: FormBuilder,
     private toastController: ToastController,
-    private navController: NavController
+    private navController: NavController,
+    private formBuilder : FormBuilder
   ) {
-    this.formularioViaje = this.fb.group({
+    this.formularioViaje = this.formBuilder.group({
       "origen": new FormControl("", Validators.required),
       "destino": new FormControl("", Validators.required),
-      "precio": new FormControl("", Validators.required)
+      "precio": new FormControl("", Validators.required),
+      "cantidadPasajeros": new FormControl(1, Validators.required)
     });
   }
 
@@ -30,12 +32,14 @@ export class CrearViajePage implements OnInit {
       const toastError = await this.toastController.create({
         message: "Por favor completa correctamente todos los campos", 
         duration: 3000,
-        position: 'bottom'
+        position: 'bottom',
+        color: 'danger'
       });
       await toastError.present();
       return;
     }
     this.enviarFormularioViaje();
+    console.log(this.formularioViaje.value)
     this.navController.navigateRoot('/viajes-en-curso');
   }
 
@@ -52,10 +56,14 @@ export class CrearViajePage implements OnInit {
     const toast = await this.toastController.create({
       message: 'El viaje ha sido terminado.',
       duration: 2000,
-      position: 'bottom'
+      position: 'bottom',
+      color: 'danger'
     });
     await toast.present();
   }
+
+  
+  
 
   ngOnInit() {}
 }

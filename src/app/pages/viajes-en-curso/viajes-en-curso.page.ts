@@ -10,16 +10,17 @@ import { ToastController } from '@ionic/angular'; // Para mostrar mensajes Toast
 })
 export class ViajesEnCursoPage implements OnInit {
 
-  viaje: any = null;
+  viajeEnCurso: any = null;
   esConductor: boolean = false;
   esPasajero: boolean = false;
+  viajeActivo: boolean = false;
 
   constructor(private servicioViajes: ServicioViajesService, private rolUsuarioService: RolUsuarioService, private toastController: ToastController) { }
 
   ngOnInit() {
     // Obtener los datos del viaje desde el servicio
-    this.viaje = this.servicioViajes.getDatos();
-    console.log('Viaje:', this.viaje);
+    this.viajeEnCurso = this.servicioViajes.getDatos();
+    console.log('Viaje:', this.viajeEnCurso);
 
     // Verificar si el usuario es conductor o pasajero
     this.esConductor = this.rolUsuarioService.esConductor();
@@ -28,32 +29,44 @@ export class ViajesEnCursoPage implements OnInit {
     console.log('esPasajero:', this.esPasajero);  // Verificar el rol de pasajero
   }
 
-  // Función para terminar el viaje
-  async terminarViaje() {
-    // Terminar el viaje usando el servicio
-    this.servicioViajes.borrarViaje();
-
-    // Actualizar la vista para reflejar que no hay viaje en curso
-    this.viaje = null;
-
-    // Muestra un mensaje de confirmación
+  // Función para tomar el viaje (solo para pasajeros)
+  async tomarViaje() {
+    //logica que cambiara valor de viajeActivo para que pasajero no pueda volver a tomar un viaje si no ha terminado su viaje
+    if(this.viajeActivo === true){
+      const toast = await this.toastController.create({
+        message: 'Tienes un viaje activo, no puedes iniciar otro hasta que finalice',
+        duration: 3000,
+        position: 'top',
+        color: 'danger'
+      });
+      await toast.present();
+      return;
+    }
+    //cambiar estado de viaje a activo
+    this.viajeActivo = true;
     const toast = await this.toastController.create({
-      message: 'El viaje ha sido terminado.',
+      message: 'Has tomado el viaje.',
       duration: 2000,
       position: 'top'
     });
     await toast.present();
   }
 
-  // Función para tomar el viaje (solo para pasajeros)
-  async tomarViaje() {
-    const viajeActivo = true;
-    // Lógica para que el pasajero tome el viaje
+  
+  // Función para terminar el viaje
+  async terminarViaje() {
+    // Terminar el viaje usando el servicio
+    this.servicioViajes.borrarViaje();
+
+    // Actualizar la vista para reflejar que no hay viaje en curso
+    this.viajeEnCurso = null;
+    this.viajeActivo = false; // Cambiar el estado del viaje a inactivo
+
+    // Muestra un mensaje de confirmación
     const toast = await this.toastController.create({
-      message: 'Has tomado el viaje.',
+      message: 'El viaje ha sido terminado.',
       duration: 2000,
       position: 'top'
-
     });
     await toast.present();
   }
