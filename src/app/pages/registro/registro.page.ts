@@ -11,7 +11,6 @@ import {
   NavController,
 } from '@ionic/angular';
 
-
 import { FirestoreService } from '../../services/firestore/firestore.service';
 
 @Component({
@@ -37,14 +36,18 @@ export class RegistroPage implements OnInit {
       confirmarPassword: new FormControl('', Validators.required),
     });
   }
-  
-  async comprobarContraseña(){
-    if(this.formularioRegistro.value.password != this.formularioRegistro.value.confirmarPassword){
+
+  async comprobarContraseña() {
+    if (
+      this.formularioRegistro.value.password !=
+      this.formularioRegistro.value.confirmarPassword
+    ) {
       const toastError = await this.toastController.create({
-        message: 'Las contraseñas no coinciden. Por favor, asegúrate de escribir la misma contraseña en ambos campos.',
+        message:
+          'Las contraseñas no coinciden. Por favor, asegúrate de escribir la misma contraseña en ambos campos.',
         duration: 3000,
         position: 'bottom',
-        color: 'danger'
+        color: 'danger',
       });
       await toastError.present();
       return false;
@@ -52,20 +55,20 @@ export class RegistroPage implements OnInit {
     return true;
   }
 
-
   async registrarse() {
     if (this.formularioRegistro.invalid) {
       const toastError = await this.toastController.create({
-        message: 'Hay campos incompletos o incorrectos. Revisa el formulario y asegúrate de que toda la información sea válida.',
+        message:
+          'Hay campos incompletos o incorrectos. Revisa el formulario y asegúrate de que toda la información sea válida.',
         duration: 3000,
         position: 'bottom',
-        color: 'danger'
+        color: 'danger',
       });
       await toastError.present();
       return;
     }
-    const passwordValida = await this.comprobarContraseña()
-    if(!passwordValida ){
+    const passwordValida = await this.comprobarContraseña();
+    if (!passwordValida) {
       return;
     }
     this.enviarFormulario();
@@ -78,12 +81,12 @@ export class RegistroPage implements OnInit {
         'email',
         this.formularioRegistro.value.email
       );
-      if (data){
+      if (data) {
         const toastError = await this.toastController.create({
           message: 'El correo ya esta registrado',
           duration: 3000,
           position: 'bottom',
-          color: 'danger'
+          color: 'danger',
         });
         await toastError.present();
         return;

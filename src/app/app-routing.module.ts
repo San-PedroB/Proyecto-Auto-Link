@@ -32,13 +32,14 @@ const routes: Routes = [
     loadChildren: () => import('./pages/crear-viaje/crear-viaje.module').then( m => m.CrearViajePageModule)
   },
   {
-    path: 'viajes-en-curso',
-    loadChildren: () => import('./pages/viajes-en-curso/viajes-en-curso.module').then( m => m.ViajesEnCursoPageModule)
+    path: 'listado-de-viajes',
+    loadChildren: () => import('./pages/listado-de-viajes/listado-de-viajes.module').then( m => m.ListadoDeViajesPageModule)
   },
   {
     path: 'cambiar-password',
     loadChildren: () => import('./pages/cambiar-password/cambiar-password.module').then( m => m.CambiarPasswordPageModule)
-  },  {
+  },
+  {
     path: 'viaje-actual',
     loadChildren: () => import('./pages/viaje-actual/viaje-actual.module').then( m => m.ViajeActualPageModule)
   },

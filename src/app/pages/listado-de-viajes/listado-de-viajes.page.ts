@@ -2,57 +2,56 @@ import { Component, OnInit } from '@angular/core';
 import { RolUsuarioService } from '../../services/rol-usuario.service'; // Servicio de rol de usuario
 import { ServicioViajesService } from '../../services/servicio-viajes.service'; // Servicio de viajes
 import { ToastController } from '@ionic/angular'; // Para mostrar mensajes Toast
+import { NavController } from '@ionic/angular';
+import { FirestoreService } from '../../services/firestore/firestore.service';
 
 @Component({
-  selector: 'app-viajes-en-curso',
-  templateUrl: './viajes-en-curso.page.html',
-  styleUrls: ['./viajes-en-curso.page.scss'],
+  selector: 'app-listado-de-viajes',
+  templateUrl: './listado-de-viajes.page.html',
+  styleUrls: ['./listado-de-viajes.page.scss'],
 })
-export class ViajesEnCursoPage implements OnInit {
-
+export class ListadoDeViajesPage implements OnInit {
   viajeEnCurso: any = null;
   esConductor: boolean = false;
   esPasajero: boolean = false;
   viajeActivo: boolean = false;
 
-  constructor(private servicioViajes: ServicioViajesService, private rolUsuarioService: RolUsuarioService, private toastController: ToastController) { }
+  constructor(
+    private servicioViajes: ServicioViajesService,
+    private rolUsuarioService: RolUsuarioService,
+    private toastController: ToastController,
+    private navController: NavController,
+    private firestoreService: FirestoreService
+  ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     // Obtener los datos del viaje desde el servicio
-    this.viajeEnCurso = this.servicioViajes.getDatos();
-    console.log('Viaje:', this.viajeEnCurso);
+    try {
+      // Usa `await` para esperar la resolución del `Promise`
+      this.viajeEnCurso = await this.firestoreService.getDocumentByQuery(
+        'viajes',
+        'estado',
+        'pendiente'
+      );
+      console.log('Viaje:', this.viajeEnCurso);
+    } catch (error) {
+      console.error('Error al obtener los datos del viaje:', error);
+    }
 
     // Verificar si el usuario es conductor o pasajero
     this.esConductor = this.rolUsuarioService.esConductor();
     this.esPasajero = this.rolUsuarioService.esPasajero();
-    console.log('esConductor:', this.esConductor);  // Verificar el rol de conductor
-    console.log('esPasajero:', this.esPasajero);  // Verificar el rol de pasajero
+    console.log('esConductor:', this.esConductor); // Verificar el rol de conductor
+    console.log('esPasajero:', this.esPasajero); // Verificar el rol de pasajero
   }
 
   // Función para tomar el viaje (solo para pasajeros)
   async tomarViaje() {
-    //logica que cambiara valor de viajeActivo para que pasajero no pueda volver a tomar un viaje si no ha terminado su viaje
-    if(this.viajeActivo === true){
-      const toast = await this.toastController.create({
-        message: 'Tienes un viaje activo, no puedes iniciar otro hasta que finalice',
-        duration: 3000,
-        position: 'top',
-        color: 'danger'
-      });
-      await toast.present();
-      return;
-    }
     //cambiar estado de viaje a activo
     this.viajeActivo = true;
-    const toast = await this.toastController.create({
-      message: 'Has tomado el viaje.',
-      duration: 2000,
-      position: 'top'
-    });
-    await toast.present();
+    this.navController.navigateRoot('/viaje-actual');
   }
 
-  
   // Función para terminar el viaje
   async terminarViaje() {
     // Terminar el viaje usando el servicio
@@ -66,7 +65,7 @@ export class ViajesEnCursoPage implements OnInit {
     const toast = await this.toastController.create({
       message: 'El viaje ha sido terminado.',
       duration: 2000,
-      position: 'top'
+      position: 'top',
     });
     await toast.present();
   }
