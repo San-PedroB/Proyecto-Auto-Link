@@ -8,10 +8,12 @@ import { AnimationController } from '@ionic/angular';
   styleUrls: ['./perfil-usuario.page.scss'],
 })
 export class PerfilUsuarioPage implements OnInit {
-  datosFormulario: any = {}
+  datosFormulario: any = {};
 
-
-  constructor(private formularioService: FormularioService, private animationCtrl: AnimationController) { }
+  constructor(
+    private formularioService: FormularioService,
+    private animationCtrl: AnimationController
+  ) {}
 
   ngOnInit() {
     this.datosFormulario = this.formularioService.getDatos();
@@ -21,13 +23,13 @@ export class PerfilUsuarioPage implements OnInit {
   ionViewWillEnter() {
     const cardElement = document.querySelector('.perfil-card'); // Selecciona el elemento
     if (cardElement) {
-      const fadeAnimation = this.animationCtrl.create()
+      const fadeAnimation = this.animationCtrl
+        .create()
         .addElement(cardElement)
         .duration(1000)
         .fromTo('opacity', 0, 1); // Animación de opacidad
-    
+
       fadeAnimation.play();
     }
   }
-
 }

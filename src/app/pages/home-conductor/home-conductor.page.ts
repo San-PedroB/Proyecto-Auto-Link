@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { AnimationController, ModalController, ToastController} from '@ionic/angular';
+import {
+  AnimationController,
+  ModalController,
+  ToastController,
+} from '@ionic/angular';
 import { ModalLoginComponent } from '../../components/modal-login/modal-login.component';
 import { Router } from '@angular/router';
-import { FormularioService } from '../../services/formulario.service'; // Importar el servicio
+import { FormularioService } from '../../services/formulario.service'; // Importar el servicio formulario
+import { ServicioViajesService } from 'src/app/services/servicio-viajes.service'; // Importar servicio de viajes
 
 @Component({
   selector: 'app-home-conductor',
@@ -12,21 +17,26 @@ import { FormularioService } from '../../services/formulario.service'; // Import
 export class HomeConductorPage implements OnInit {
   datosFormulario: any = {};
 
-  constructor(private modalController: ModalController, private router: Router, private formularioService: FormularioService, private animationCtrl: AnimationController) { 
-    
-  }
+  constructor(
+    private modalController: ModalController,
+    private router: Router,
+    private toastController: ToastController,
+    private formularioService: FormularioService,
+    private servicioViajes: ServicioViajesService,
+    private animationCtrl: AnimationController
+  ) {}
 
-  cerrarSesion(){
+  cerrarSesion() {
     localStorage.clear();
     this.router.navigate(['/login']);
   }
 
-  async abrirModal(){
+  async abrirModal() {
     const modal = await this.modalController.create({
-      component: ModalLoginComponent
-    })
+      component: ModalLoginComponent,
+    });
     return await modal.present();
-   }
+  }
 
   ngOnInit() {
     this.datosFormulario = this.formularioService.getDatos();
@@ -37,12 +47,32 @@ export class HomeConductorPage implements OnInit {
   ionViewWillEnter() {
     const nameElement = document.querySelector('.fade'); // Seleccionar el elemento
     if (nameElement) {
-      const fadeAnimation = this.animationCtrl.create()
+      const fadeAnimation = this.animationCtrl
+        .create()
         .addElement(nameElement)
         .duration(1000)
         .fromTo('opacity', 0, 1); // Desde opacidad 0 a 1
-      
+
       fadeAnimation.play();
     }
+  }
+
+  async verificarEstadoViaje() {
+    if (this.servicioViajes.isViajeCreado()) {
+      // Mostrar mensaje si hay un viaje en curso
+      const toast = await this.toastController.create({
+        message: 'Ya tienes un viaje en curso.',
+        duration: 3000,
+        position: 'top',
+        color: 'warning',
+      });
+      await toast.present();
+      return;
+    }
+    this.abirVentanaCrearViaje();
+  }
+
+  async abirVentanaCrearViaje() {
+    this.router.navigate(['/crear-viaje']);
   }
 }

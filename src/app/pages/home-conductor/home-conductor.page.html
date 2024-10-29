@@ -17,12 +17,12 @@
   </ion-button>
 
   <!-- Botón: Crear Viaje -->
-  <ion-button routerLink="/crear-viaje"  expand="block" fill="solid" color="dark" class="boton-grande">
+  <ion-button (click)="verificarEstadoViaje()"  expand="block" fill="solid" color="secondary" class="boton-grande">
     <ion-icon name="search-outline" slot="start" class="icono-boton"></ion-icon>
     Crear Viaje
   </ion-button>
 
-  <ion-button routerLink="/viajes-en-curso"  expand="block" fill="solid" color="secondary" class="boton-grande">
+  <ion-button routerLink="/listado-de-viajes"  expand="block" fill="solid" color="secondary" class="boton-grande">
     <ion-icon name="search-outline" slot="start" class="icono-boton"></ion-icon>
     Ver Viajes en Curso
   </ion-button>
