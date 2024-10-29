@@ -7,15 +7,13 @@ import { FormularioService } from '../../services/formulario.service'; // Import
   styleUrls: ['./perfil-usuario.page.scss'],
 })
 export class PerfilUsuarioPage implements OnInit {
-  datosFormulario: any = {}
+  datosFormulario: any = {};
 
-
-  constructor(private formularioService: FormularioService) { }
+  constructor(private formularioService: FormularioService) {}
 
   ngOnInit() {
     this.datosFormulario = this.formularioService.getDatos();
     // Verificar si los datos se cargan correctamente
     console.log('Datos del usuario:', this.datosFormulario);
   }
-
 }
