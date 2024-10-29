@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormularioService } from '../../services/formulario.service'; // Importar el servicio
 import { AnimationController } from '@ionic/angular';
+import { FirestoreService } from 'src/app/services/firestore/firestore.service';
 
 @Component({
   selector: 'app-perfil-usuario',
