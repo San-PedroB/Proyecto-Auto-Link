@@ -48,14 +48,12 @@
                   <ion-label slot="end">10</ion-label>
                 </ion-range>
               </ion-item>
-              
               <!-- Muestra el valor seleccionado -->
               <br>
               <p style="text-align: center; font-size: 1.2em">
                 Pasajeros que puedes llevar: {{ formularioViaje.get('cantidadPasajeros')?.value || 1 }}
               </p>
               <br>
-
               <!-- Botón para crear el viaje -->
               <ion-button expand="full" type="submit" (click)="crearViaje()">Crear Viaje</ion-button>
             </form>

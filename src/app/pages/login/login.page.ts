@@ -11,8 +11,8 @@ import {
   ToastController,
 } from '@ionic/angular';
 import { FirestoreService } from '../../services/firestore/firestore.service';
-
 import { ModalLoginComponent } from '../../components/modal-login/modal-login.component';
+import { GuardarCorreoService } from 'src/app/services/guardar-correo.service';
 
 @Component({
   selector: 'app-login',
@@ -31,7 +31,8 @@ export class LoginPage implements OnInit {
     public fb: FormBuilder,
     private toastController: ToastController,
     private modalController: ModalController,
-    private firestoreService: FirestoreService
+    private firestoreService: FirestoreService,
+    private guardarCorreoService: GuardarCorreoService // Inyecta el AuthService aquí
   ) {
     this.formularioLogin = this.fb.group({
       email: new FormControl('', [Validators.required, Validators.email]),
@@ -40,19 +41,9 @@ export class LoginPage implements OnInit {
   }
 
   async autenticarUsuario() {
-    const dataEmail = await this.firestoreService.getDocumentByQuery(
-      'users',
-      'email',
-      this.formularioLogin.value.email
-    );
-    const dataPassword = await this.firestoreService.getDocumentByQuery(
-      'users',
-      'password',
-      this.formularioLogin.value.password
-    );
     if (this.formularioLogin.invalid) {
       const toastErrorCampos = await this.toastController.create({
-        message: 'Porfavor completa correctamente todos los campos',
+        message: 'Por favor completa correctamente todos los campos',
         duration: 3000,
         position: 'bottom',
         color: 'danger',
@@ -60,7 +51,45 @@ export class LoginPage implements OnInit {
       await toastErrorCampos.present();
       return;
     }
-    this.abrirModalLogin();
+
+    // Acceder a los valores del formulario usando la notación de corchetes
+    const email = this.formularioLogin.value['email'];
+    const password = this.formularioLogin.value['password'];
+
+    // Obtener los datos del usuario desde Firestore
+    const dataEmail = await this.firestoreService.getDocumentByQuery(
+      'users',
+      'email',
+      email
+    );
+    const dataPassword = await this.firestoreService.getDocumentByQuery(
+      'users',
+      'password',
+      password
+    );
+
+    // Verificar si las propiedades existen y comparar valores
+    if (
+      dataEmail &&
+      dataPassword &&
+      dataEmail['email'] === email &&
+      dataPassword['password'] === password
+    ) {
+      // Almacenar el correo en el servicio de autenticación
+      this.guardarCorreoService.setCorreoUsuario(email);
+
+      // Abre el modal de login exitoso
+      this.abrirModalLogin();
+    } else {
+      // Mostrar mensaje de error si las credenciales no coinciden
+      const toastError = await this.toastController.create({
+        message: 'Correo o contraseña incorrectos',
+        duration: 3000,
+        position: 'bottom',
+        color: 'danger',
+      });
+      await toastError.present();
+    }
   }
 
   async abrirModalLogin() {

@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ServicioViajesService {
-
-  private datosViaje: any = null;  // Solo un objeto de viaje
+  private datosViaje: any = null; // Solo un objeto de viaje
   private viajeCreado: boolean = false; // Estado del viaje creado
 
-  constructor() { }
+  constructor() {}
 
   // funcion para establecer los datos del viaje
   setDatos(datos: any) {

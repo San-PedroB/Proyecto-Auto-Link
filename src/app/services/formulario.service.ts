@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class FormularioService {
   private datosFormulario: any = {};
 
-  constructor() { }
+  constructor() {}
 
   // Método para establecer los datos del formulario
   setDatos(datos: any) {
