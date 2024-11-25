@@ -24,20 +24,44 @@ export class ListadoDeViajesPage implements OnInit {
   ) {}
 
   async ngOnInit() {
-    // Obtener todos los viajes en estado "pendiente"
-    this.viajesPendientes = await this.firestoreService.getViajesPendientes();
-    console.log('Viajes pendientes encontrados:', this.viajesPendientes);
+    console.log('Inicializando listado de viajes...');
 
     // Verificar el rol del usuario
     this.esConductor = this.rolUsuarioService.esConductor();
     this.esPasajero = this.rolUsuarioService.esPasajero();
+    console.log(
+      'Rol del usuario - esConductor:',
+      this.esConductor,
+      'esPasajero:',
+      this.esPasajero
+    );
 
-    // Cargar viajes aceptados si el usuario es conductor
+    if (this.esPasajero) {
+      console.log('Buscando viajes aceptados para el pasajero...');
+      const viajesAceptados = await this.firestoreService.getDocumentsByQuery(
+        'viajes',
+        'estado',
+        'aceptado'
+      );
+
+      console.log('Viajes aceptados encontrados:', viajesAceptados);
+
+      if (viajesAceptados.length > 0) {
+        console.log('Redirigiendo a la vista de viaje actual...');
+        this.navController.navigateRoot(
+          `/viaje-actual/${viajesAceptados[0].id}`
+        );
+        return; // Salir de ngOnInit
+      }
+    }
+
+    // Obtener todos los viajes en estado "pendiente"
+    this.viajesPendientes = await this.firestoreService.getViajesPendientes();
+    console.log('Viajes pendientes encontrados:', this.viajesPendientes);
+
     if (this.esConductor) {
-      // Cargar todos los viajes para el conductor
       await this.cargarTodosLosViajes();
     } else if (this.esPasajero) {
-      // Cargar solo los viajes pendientes para el pasajero
       await this.cargarViajesPendientes();
     }
   }
