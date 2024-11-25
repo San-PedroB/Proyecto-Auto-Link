@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RolUsuarioService {
-
   private rolUsuario: string = ''; // Almacenar el rol del usuario ('conductor' o 'pasajero')
 
-  constructor() { }
+  constructor() {}
 
   // Método para establecer el rol del usuario
   setRolUsuario(rol: string) {

@@ -59,16 +59,20 @@ export class LoginPage implements OnInit {
     const password = this.formularioLogin.value['password'];
 
     // Obtener los datos del usuario desde Firestore
-    const dataEmail = await this.firestoreService.getDocumentByQuery(
+    const documentosEmail = await this.firestoreService.getDocumentsByQuery(
       'users',
       'email',
       email
     );
-    const dataPassword = await this.firestoreService.getDocumentByQuery(
+    const dataEmail = documentosEmail.length > 0 ? documentosEmail[0] : null; // Toma el primer resultado si existe
+
+    const documentosPassword = await this.firestoreService.getDocumentsByQuery(
       'users',
       'password',
       password
     );
+    const dataPassword =
+      documentosPassword.length > 0 ? documentosPassword[0] : null; // Toma el primer resultado si existe
 
     // Verificar si las propiedades existen y comparar valores
     if (

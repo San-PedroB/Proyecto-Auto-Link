@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button default-href="/home-conductor" text="Volver"></ion-back-button>
+      <ion-back-button [defaultHref]="esConductor ? '/home-conductor' : '/home-pasajero'" text="Volver"></ion-back-button>
     </ion-buttons>
     <ion-title>Listado de Viajes</ion-title>
   </ion-toolbar>
@@ -9,9 +9,10 @@
 
 <ion-content>
   <ion-grid>
-    <!-- Lista de viajes pendientes para todos los usuarios -->
+    <!-- Sección para viajes pendientes -->
     <ion-row>
       <ion-col size="12">
+        <h2 *ngIf="viajesPendientes.length > 0" class="ion-text-center">Viajes Pendientes</h2>
         <ion-card *ngFor="let viaje of viajesPendientes">
           <ion-card-header>
             <ion-card-title>{{ viaje.origen }} → {{ viaje.destino }}</ion-card-title>
@@ -22,14 +23,18 @@
             <p><strong>Destino:</strong> {{ viaje.destino }}</p>
             <p><strong>Precio:</strong> ${{ viaje.precio }}</p>
             <p><strong>Pasajeros:</strong> {{ viaje.cantidadPasajeros }}</p>
+            <p>
+              <strong>Estado:</strong>
+              <ion-badge color="warning">Pendiente</ion-badge>
+            </p>
 
-            <!-- Botón "Tomar Viaje" si es pasajero -->
+            <!-- Botón "Tomar Viaje" solo visible para pasajeros -->
             <ion-button *ngIf="esPasajero" expand="full" color="success" (click)="tomarViaje(viaje)">
               Tomar Viaje
             </ion-button>
 
-            <!-- Botón para eliminar viaje si es conductor -->
-            <ion-button *ngIf="esConductor" color="danger" expand="full" (click)="terminarViaje(viaje.conductorCorreo)">
+            <!-- Botón para eliminar viaje visible solo para conductores -->
+            <ion-button *ngIf="esConductor" color="danger" expand="full" (click)="terminarViaje(viaje.id)">
               Eliminar Viaje
             </ion-button>
           </ion-card-content>
@@ -37,9 +42,10 @@
       </ion-col>
     </ion-row>
 
-    <!-- Lista de viajes aceptados para el conductor logueado -->
+    <!-- Sección para viajes aceptados (solo visible para conductores) -->
     <ion-row *ngIf="esConductor && viajesAceptados.length > 0">
       <ion-col size="12">
+        <h2 class="ion-text-center">Viajes Aceptados</h2>
         <ion-card *ngFor="let viaje of viajesAceptados">
           <ion-card-header>
             <ion-card-title>{{ viaje.origen }} → {{ viaje.destino }}</ion-card-title>
@@ -48,11 +54,25 @@
             <p><strong>Origen:</strong> {{ viaje.origen }}</p>
             <p><strong>Destino:</strong> {{ viaje.destino }}</p>
             <p><strong>Precio:</strong> ${{ viaje.precio }}</p>
-            <p><strong>Estado:</strong> {{ viaje.estado }}</p>
+            <p>
+              <strong>Estado:</strong>
+              <ion-badge color="success">Aceptado</ion-badge>
+            </p>
+
+            <!-- Botón "Terminar Viaje" visible solo para conductores -->
+            <ion-button color="warning" expand="full" (click)="terminarViaje(viaje.id)">
+              Terminar Viaje
+            </ion-button>
           </ion-card-content>
         </ion-card>
       </ion-col>
     </ion-row>
 
+    <!-- Mensaje cuando no hay viajes disponibles -->
+    <ion-row *ngIf="viajesPendientes.length === 0 && (!esConductor || viajesAceptados.length === 0)">
+      <ion-col>
+        <p class="ion-text-center">No hay viajes disponibles en este momento.</p>
+      </ion-col>
+    </ion-row>
   </ion-grid>
 </ion-content>

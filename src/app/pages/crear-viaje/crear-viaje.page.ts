@@ -10,6 +10,7 @@ import { ToastController, NavController } from '@ionic/angular';
 import { ServicioViajesService } from '../../services/servicio-viajes.service'; // Importa el servicio de viajes
 import { FirestoreService } from '../../services/firestore/firestore.service';
 import { GuardarCorreoService } from 'src/app/services/guardar-correo.service';
+import { ActivatedRoute, Route } from '@angular/router';
 
 @Component({
   selector: 'app-crear-viaje',
@@ -21,8 +22,10 @@ export class CrearViajePage implements OnInit {
   numeroPasajeros: number = 0;
   viajeEnCurso: boolean = false;
   viajesArray: any[] = [];
+  viaje: any = null;
 
   constructor(
+    private route: ActivatedRoute,
     private servicioViajes: ServicioViajesService,
     private toastController: ToastController,
     private navController: NavController,
@@ -59,7 +62,7 @@ export class CrearViajePage implements OnInit {
     // Verificación de campos del formulario
     if (this.formularioViaje.invalid) {
       const toastError = await this.toastController.create({
-        message: 'Por favor completa correctamente todos los campos',
+        message: 'Por favor completa correctamente todos los campos.',
         duration: 3000,
         position: 'bottom',
         color: 'warning',
@@ -68,45 +71,15 @@ export class CrearViajePage implements OnInit {
       return;
     }
 
-    // Si no hay un viaje activo, procede a crear uno nuevo
-    this.viajeEnCurso = true;
+    // Si no hay un viaje activo y el formulario es válido
+    this.viajeEnCurso = true; // Cambiar el estado para reflejar que hay un viaje en curso
+
+    // Llamar al método que guarda el formulario y actualiza los datos
     await this.enviarFormularioViaje();
-    this.obtenerCantidadPasajeros();
-    console.log(this.formularioViaje.value);
-    console.log('Viaje creado');
+
+    // Redirigir al listado de viajes
+    console.log('Viaje creado exitosamente.');
     this.navController.navigateRoot('/listado-de-viajes');
-  }
-
-  async verificarViajeActivo(): Promise<boolean> {
-    const correoConductor = this.guardarCorreoService.getCorreoUsuario();
-
-    if (!correoConductor) {
-      // Si no hay correo del conductor, no se puede proceder
-      console.warn('Correo del conductor no encontrado.');
-      return false;
-    }
-
-    // Verificar si hay un viaje asociado al conductor
-    const viaje = await this.firestoreService.getDocumentByQuery(
-      'viajes',
-      'conductorCorreo',
-      correoConductor
-    );
-
-    // Si hay un viaje encontrado, verifica si está en estado 'pendiente'
-    if (viaje && viaje['estado'] === 'pendiente') {
-      return true; // Hay un viaje activo
-    }
-
-    return false; // No hay un viaje activo
-  }
-
-  async obtenerCantidadPasajeros() {
-    const datosViaje = this.servicioViajes.getDatos();
-    if (datosViaje && datosViaje.cantidadPasajeros !== undefined) {
-      this.numeroPasajeros = datosViaje.cantidadPasajeros;
-    }
-    console.log('Número de pasajeros:', this.numeroPasajeros);
   }
 
   async enviarFormularioViaje() {
@@ -123,15 +96,57 @@ export class CrearViajePage implements OnInit {
         conductorCorreo: correoConductor,
       };
 
-      // Agregar el nuevo viaje al arreglo de viajes
-      this.viajesArray.push(nuevoViaje);
+      // Guardar el viaje en Firestore y obtener su ID
+      const idViaje = await this.firestoreService.createDocument(
+        'viajes',
+        nuevoViaje
+      );
 
-      // Guardar el viaje individual en Firestore
-      await this.firestoreService.createDocument('viajes', nuevoViaje);
+      console.log('ID generado por Firestore:', idViaje);
 
-      // Depuración: Ver el arreglo completo de viajes
-      console.log('Arreglo de viajes actualizado:', this.viajesArray);
+      // Agregar el ID al objeto de viaje
+      const viajeConId = { id: idViaje, ...nuevoViaje };
+
+      // Actualizar la lista local y asignar el viaje actual
+      this.viajesArray.push(viajeConId);
+      this.viaje = viajeConId;
+
+      console.log('Viaje creado correctamente:', viajeConId);
     }
+  }
+
+  async verificarViajeActivo(): Promise<boolean> {
+    const correoConductor = this.guardarCorreoService.getCorreoUsuario();
+
+    if (!correoConductor) {
+      // Si no hay correo del conductor, no se puede proceder
+      console.warn('Correo del conductor no encontrado.');
+      return false;
+    }
+
+    // Verificar si hay un viaje asociado al conductor
+    const viajes = await this.firestoreService.getDocumentsByQuery(
+      'viajes',
+      'conductorCorreo',
+      correoConductor
+    );
+
+    const viaje = viajes.length > 0 ? viajes[0] : null; // Toma el primer resultado si existe
+
+    // Si hay un viaje encontrado, verifica si está en estado 'pendiente'
+    if (viaje && viaje['estado'] === 'pendiente') {
+      return true; // Hay un viaje activo
+    }
+
+    return false; // No hay un viaje activo
+  }
+
+  async obtenerCantidadPasajeros() {
+    const datosViaje = this.servicioViajes.getDatos();
+    if (datosViaje && datosViaje.cantidadPasajeros !== undefined) {
+      this.numeroPasajeros = datosViaje.cantidadPasajeros;
+    }
+    console.log('Número de pasajeros:', this.numeroPasajeros);
   }
 
   ngOnInit() {}

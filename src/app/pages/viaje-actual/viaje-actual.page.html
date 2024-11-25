@@ -1,46 +1,52 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button default-href="/home-pasajero" text="Volver"></ion-back-button>
+      <ion-back-button *ngIf="esConductor" defaultHref="/home-conductor" text="Volver"></ion-back-button>
+      <ion-back-button *ngIf="!esConductor" defaultHref="/home-pasajero" text="Volver"></ion-back-button>
     </ion-buttons>
     <ion-title>Viaje Actual</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content *ngIf="viajeActual">
-  <ion-grid>
-    <ion-row>
-      <ion-col size="12">
-        <ion-card>
-          <ion-card-header>
-            <ion-card-title>{{ viajeActual.origen }} → {{ viajeActual.destino }}</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <p><strong>Origen:</strong> {{ viajeActual.origen }}</p>
-            <p><strong>Destino:</strong> {{ viajeActual.destino }}</p>
-            <p><strong>Precio:</strong> ${{ viajeActual.precio }}</p>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
 
-    <!-- Fila adicional para el botón con el temporizador regresivo -->
-    <ion-row>
-      <ion-col size="12" class="ion-text-center">
-        <!-- Botón de cancelación con el temporizador -->
-        <ion-button [disabled]="!botonHabilitado" (click)="cancelarViaje()">
-          Cancelar Viaje ({{ tiempoRestante }}s)
-        </ion-button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
-</ion-content>
+<ion-content class="ion-padding">
+  <div *ngIf="viajeActual">
+    <!-- Mapa Ficticio -->
+    <div class="mapa-container">
+      <img src="assets/images/mapa-ficticio.jpg" alt="Mapa Ficticio" class="mapa-img" />
+    </div>
 
-<!-- Mensaje alternativo si `viajeActual` es `null` -->
-<ion-content *ngIf="!viajeActual">
-  <ion-card>
-    <ion-card-content>
-      <p>No hay información del viaje actual.</p>
-    </ion-card-content>
-  </ion-card>
+    <!-- Información del Viaje -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Detalles del Viaje</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p><strong>Origen:</strong> {{ viajeActual.origen }}</p>
+        <p><strong>Destino:</strong> {{ viajeActual.destino }}</p>
+        <p *ngIf="datosConductor">
+          <strong>Conductor:</strong> {{ datosConductor.nombre }} {{ datosConductor.apellido }}
+        </p>
+        <p *ngIf="!datosConductor">
+          <strong>Conductor:</strong> Información no disponible
+        </p>
+        <p><strong>Estado:</strong> {{ viajeActual.estado }}</p>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Botón con contador -->
+    <ion-button
+      expand="block"
+      color="danger"
+      (click)="cancelarViaje()"
+      [disabled]="!botonHabilitado"
+    >
+      Cancelar Viaje
+      <span *ngIf="tiempoRestante > 0"> ({{ tiempoRestante }}s)</span>
+    </ion-button>
+  </div>
+
+  <div *ngIf="!viajeActual">
+    <p class="ion-text-center">Cargando información del viaje...</p>
+  </div>
 </ion-content>

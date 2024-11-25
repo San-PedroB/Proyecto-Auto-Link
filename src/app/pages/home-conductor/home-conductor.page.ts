@@ -58,7 +58,7 @@ export class HomeConductorPage implements OnInit {
   }
 
   async verificarEstadoViaje() {
-    if (this.servicioViajes.isViajeCreado()) {
+    /*if (this.servicioViajes.isViajeCreado()) {
       // Mostrar mensaje si hay un viaje en curso
       const toast = await this.toastController.create({
         message: 'Ya tienes un viaje en curso.',
@@ -68,7 +68,7 @@ export class HomeConductorPage implements OnInit {
       });
       await toast.present();
       return;
-    }
+    }*/
     this.abirVentanaCrearViaje();
   }
 

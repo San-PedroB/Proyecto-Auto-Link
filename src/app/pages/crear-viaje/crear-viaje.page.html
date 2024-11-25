@@ -40,7 +40,6 @@
               </ion-item>
               <br>
               <!-- Campo: Cantidad pasajeros -->
-               
               <ion-item>
                 <ion-label position="floating" style="font-size: 1.25em">Capacidad de pasajeros</ion-label>
                 <ion-range formControlName="cantidadPasajeros" min="1" max="10" step="1" snaps="true" ticks="true" pin="true">
@@ -57,6 +56,25 @@
               <!-- Botón para crear el viaje -->
               <ion-button expand="full" type="submit" (click)="crearViaje()">Crear Viaje</ion-button>
             </form>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+
+    <!-- Nueva sección: Datos del viaje creado -->
+    <ion-row *ngIf="viaje">
+      <ion-col>
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Detalles del Viaje</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p><strong>Origen:</strong> {{ viaje.origen }}</p>
+            <p><strong>Destino:</strong> {{ viaje.destino }}</p>
+            <p><strong>Precio:</strong> {{ viaje.precio }}</p>
+            <p><strong>Cantidad de Pasajeros:</strong> {{ viaje.cantidadPasajeros }}</p>
+            <p><strong>Estado:</strong> {{ viaje.estado }}</p>
+            <p><strong>ID del Viaje:</strong> {{ viaje.id }}</p>
           </ion-card-content>
         </ion-card>
       </ion-col>

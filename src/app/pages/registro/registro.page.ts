@@ -75,12 +75,16 @@ export class RegistroPage implements OnInit {
   }
 
   async enviarFormulario() {
+    // Verificar si el correo ya está registrado
     if (this.formularioRegistro.valid) {
-      const data = await this.firestoreService.getDocumentByQuery(
-        'users',
-        'email',
-        this.formularioRegistro.value.email
+      const documentos = await this.firestoreService.getDocumentsByQuery(
+        'users', // Nombre de la colección
+        'email', // Campo a buscar
+        this.formularioRegistro.value.email // Valor a buscar
       );
+
+      const data = documentos.length > 0 ? documentos[0] : null; // Verificar si hay resultados
+
       if (data) {
         const toastError = await this.toastController.create({
           message: 'El correo ya esta registrado',

@@ -1,6 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { Firestore, deleteDoc, doc, updateDoc } from '@angular/fire/firestore';
-import { addDoc, collection, getDocs, query, where } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  getDocs,
+  getDoc,
+  query,
+  where,
+} from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root',
@@ -12,93 +19,112 @@ export class FirestoreService {
     console.log('FirestoreService constructor');
   }
 
+  // FUNCIONES NUEVAS POR ID****
+  async getDocument(nombreColeccion: string, id: string): Promise<any> {
+    const referenciaDocumento = doc(this.firestore, `${nombreColeccion}/${id}`);
+    const documento = await getDoc(referenciaDocumento);
+
+    if (documento.exists()) {
+      return { id: documento.id, ...documento.data() }; // Incluye el ID del documento
+    } else {
+      console.warn(
+        `No se encontró ningún documento con ID: ${id} en la colección ${nombreColeccion}`
+      );
+      return null;
+    }
+  }
+
+  //********************************************************************************************* */
+
   // Método para crear un documento en una colección
-  async createDocument(collectionName: string, data: any) {
+  async createDocument(collectionName: string, data: any): Promise<string> {
     const collectionRef = collection(this.firestore, collectionName);
-    await addDoc(collectionRef, data);
+    const docRef = await addDoc(collectionRef, data); // Crea el documento
+    console.log('Documento creado con ID:', docRef.id); // Muestra el ID generado
+    return docRef.id; // Devuelve el ID generado
   }
 
   // Método para obtener el primer documento que coincida con la consulta
-  async getDocumentByQuery(collectionName: string, field: string, value: any) {
+  async getDocumentsByQuery(
+    collectionName: string,
+    field: string,
+    value: any
+  ): Promise<any[]> {
     const collectionRef = collection(this.firestore, collectionName);
-    const queryFilter = where(field, '==', value);
-    const querySnapshot = await getDocs(query(collectionRef, queryFilter));
-    const data = querySnapshot.docs.map((doc) => doc.data());
-    return data[0];
+    const queryFilter = query(collectionRef, where(field, '==', value));
+    const querySnapshot = await getDocs(queryFilter);
+
+    // Asegúrate de incluir el ID de Firestore en los datos retornados
+    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
   }
 
-  // Método para actualizar el estado del viaje basado en el correo del conductor
-  async actualizarEstadoViajePorCorreo(
-    correoConductor: string,
+  // Método para actualizar el estado del viaje basado en su ID
+  async actualizarEstadoViaje(
+    viajeId: string,
     nuevoEstado: string
   ): Promise<void> {
-    const collectionRef = collection(this.firestore, 'viajes');
-    const queryFilter = query(
-      collectionRef,
-      where('conductorCorreo', '==', correoConductor)
-    );
-    const querySnapshot = await getDocs(queryFilter);
-
-    if (!querySnapshot.empty) {
-      const viajeDoc = querySnapshot.docs[0];
-      const viajeRef = doc(this.firestore, 'viajes', viajeDoc.id);
-
-      // Actualiza el estado del viaje
-      await updateDoc(viajeRef, { estado: nuevoEstado });
-      console.log(
-        `Estado del viaje con correo ${correoConductor} actualizado a ${nuevoEstado}`
-      );
-    }
-  }
-
-  async obtenerViajesAceptados(correoConductor: string): Promise<any[]> {
-    const coleccionRef = collection(this.firestore, 'viajes');
-    const filtroConsulta = query(
-      coleccionRef,
-      where('estado', '==', 'aceptado'),
-      where('conductorCorreo', '==', correoConductor)
-    );
-    const consultaSnapshot = await getDocs(filtroConsulta);
-
-    // Devuelve un arreglo con todos los documentos en estado "aceptado" y del conductor logueado
-    return consultaSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-  }
-
-  // Método para eliminar un viaje basado en el correo del conductor
-  async eliminarViaje(conductorCorreo: string): Promise<void> {
-    const collectionRef = collection(this.firestore, 'viajes');
-    const queryFilter = query(
-      collectionRef,
-      where('conductorCorreo', '==', conductorCorreo)
-    );
-    const querySnapshot = await getDocs(queryFilter);
-
+    const viajeRef = doc(this.firestore, `viajes/${viajeId}`); // Referencia al documento por ID
+    await updateDoc(viajeRef, { estado: nuevoEstado }); // Actualiza el estado
     console.log(
-      `Documentos encontrados para el correo ${conductorCorreo}:`,
-      querySnapshot.docs.length
+      `Estado del viaje con ID ${viajeId} actualizado a ${nuevoEstado}`
+    );
+  }
+
+  async getViajeActual(viajeId: string): Promise<any> {
+    const viaje = await this.getDocument('viajes', viajeId);
+    console.log('Viaje obtenido de Firestore:', viaje);
+    return viaje;
+  }
+
+  async getViajesAceptados(idUsuario: string): Promise<any[]> {
+    const collectionRef = collection(this.firestore, 'viajes');
+    const filtroConsulta = query(
+      collectionRef,
+      where('usuarioId', '==', idUsuario), // Filtrar por ID del usuario
+      where('estado', '==', 'aceptado') // Filtrar por estado "aceptado"
     );
 
-    if (!querySnapshot.empty) {
-      const viajeDoc = querySnapshot.docs[0];
-      console.log('Datos del documento antes de eliminar:', viajeDoc.data());
+    const querySnapshot = await getDocs(filtroConsulta);
+    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  }
 
-      // Elimina el documento
-      await deleteDoc(viajeDoc.ref);
+  async getViajesPendientes(): Promise<any[]> {
+    return this.getDocumentsByQuery('viajes', 'estado', 'pendiente');
+  }
+
+  async eliminarViaje(viajeId: string): Promise<void> {
+    console.log('Intentando eliminar el viaje con ID:', viajeId);
+
+    if (!viajeId) {
+      console.error('ID del viaje no es válido. No se puede eliminar.');
+      return;
+    }
+
+    try {
+      const referenciaDocumento = doc(this.firestore, `viajes/${viajeId}`);
+      console.log('Referencia del documento:', referenciaDocumento);
+
+      await deleteDoc(referenciaDocumento);
       console.log(
-        `Documento del viaje eliminado para el correo: ${conductorCorreo}`
+        `Viaje con ID ${viajeId} eliminado correctamente de Firestore.`
       );
-    } else {
-      console.warn('No se encontró un viaje activo para este conductor.');
+    } catch (error) {
+      console.error(`Error al eliminar el viaje con ID ${viajeId}:`, error);
+      throw error; // Esto se manejará en el método que llama a eliminarViaje
     }
   }
 
-  // Método para obtener todos los documentos que estén en estado 'pendiente'
-  async getPendingViajes(collectionName: string): Promise<any[]> {
-    const collectionRef = collection(this.firestore, collectionName);
-    const queryFilter = where('estado', '==', 'pendiente');
-    const querySnapshot = await getDocs(query(collectionRef, queryFilter));
+  async verificarViajeActivo(correoConductor: string): Promise<boolean> {
+    // Obtener viajes con conductorCorreo coincidente y estado "pendiente"
+    const viajes = await this.getDocumentsByQuery(
+      'viajes',
+      'conductorCorreo',
+      correoConductor
+    );
 
-    // Devuelve un arreglo con todos los documentos encontrados
-    return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    // Devolver true si existe algún viaje en estado "pendiente"
+    return viajes.some(
+      (viaje) => viaje.estado === 'pendiente' || viaje.estado === 'aceptado'
+    );
   }
 }
