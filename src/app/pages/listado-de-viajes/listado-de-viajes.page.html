@@ -10,9 +10,9 @@
 <ion-content>
   <ion-grid>
     <!-- Sección para viajes pendientes -->
-    <ion-row>
+    <ion-row *ngIf="viajesPendientes.length > 0">
       <ion-col size="12">
-        <h2 *ngIf="viajesPendientes.length > 0" class="ion-text-center">Viajes Pendientes</h2>
+        <h2 class="ion-text-center">Viajes Pendientes</h2>
         <ion-card *ngFor="let viaje of viajesPendientes">
           <ion-card-header>
             <ion-card-title>{{ viaje.origen }} → {{ viaje.destino }}</ion-card-title>
@@ -22,10 +22,13 @@
             <p><strong>Origen:</strong> {{ viaje.origen }}</p>
             <p><strong>Destino:</strong> {{ viaje.destino }}</p>
             <p><strong>Precio:</strong> ${{ viaje.precio }}</p>
+            <p>
             <p><strong>Pasajeros:</strong> {{ viaje.cantidadPasajeros }}</p>
             <p>
               <strong>Estado:</strong>
-              <ion-badge color="warning">Pendiente</ion-badge>
+              <ion-badge [color]="viaje.estado === 'pendiente' ? 'warning' : 'success'">
+                {{ viaje.estado | titlecase }}
+              </ion-badge>
             </p>
 
             <!-- Botón "Tomar Viaje" solo visible para pasajeros -->

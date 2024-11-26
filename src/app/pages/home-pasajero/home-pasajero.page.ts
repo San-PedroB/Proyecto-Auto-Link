@@ -40,7 +40,7 @@ export class HomePasajeroPage implements OnInit {
       const viajes = await this.fireStoreService.getDocumentsByQuery(
         'viajes',
         'estado',
-        'activo'
+        'aceptado'
       );
 
       if (viajes.length > 0) {

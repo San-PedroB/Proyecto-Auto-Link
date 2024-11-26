@@ -66,7 +66,7 @@ export class ListadoDeViajesPage implements OnInit {
     }
   }
 
-  private async cargarTodosLosViajes() {
+  async cargarTodosLosViajes() {
     this.viajesPendientes = await this.firestoreService.getDocumentsByQuery(
       'viajes',
       'estado',
@@ -79,8 +79,36 @@ export class ListadoDeViajesPage implements OnInit {
       'aceptado'
     );
 
-    console.log('Viajes pendientes para conductor:', this.viajesPendientes);
-    console.log('Viajes aceptados para conductor:', this.viajesAceptados);
+    this.viajesPendientes = await this.agregarDatosConductor(
+      this.viajesPendientes
+    );
+    this.viajesAceptados = await this.agregarDatosConductor(
+      this.viajesAceptados
+    );
+
+    console.log(
+      'Viajes pendientes con datos del conductor:',
+      this.viajesPendientes
+    );
+    console.log(
+      'Viajes aceptados con datos del conductor:',
+      this.viajesAceptados
+    );
+  }
+
+  // Función auxiliar para agregar datos del conductor a una lista de viajes
+
+  private async agregarDatosConductor(viajes: any[]): Promise<any[]> {
+    for (const viaje of viajes) {
+      if (viaje.conductorCorreo) {
+        const datosConductor = await this.obtenerDatosConductor(
+          viaje.conductorCorreo
+        );
+        viaje.conductorNombre = datosConductor?.nombre || 'N/A';
+        viaje.conductorApellido = datosConductor?.apellido || 'N/A';
+      }
+    }
+    return viajes;
   }
 
   private async cargarViajesPendientes() {
@@ -92,13 +120,14 @@ export class ListadoDeViajesPage implements OnInit {
     console.log('Viajes pendientes:', this.viajesPendientes);
   }
 
-  private obtenerIdUsuario(): string | null {
-    // Implementa aquí la lógica para obtener el ID del usuario logueado
-    // Por ejemplo, desde un servicio de autenticación o almacenamiento local
-    return 'idUsuario123'; // Reemplazar con la lógica real
+  async obtenerDatosConductor(correo: string): Promise<any> {
+    const conductores = await this.firestoreService.getDocumentsByQuery(
+      'users',
+      'email',
+      correo
+    );
   }
 
-  // Función para tomar un viaje (solo para pasajeros)
   // Función para tomar un viaje (solo para pasajeros)
   async tomarViaje(viaje: any) {
     if (!viaje.id) {

@@ -28,6 +28,7 @@ export class ViajeActualPage implements OnInit, OnDestroy {
   async ngOnInit() {
     this.esConductor = this.rolUsuarioService.esConductor();
     const viajeId = this.route.snapshot.paramMap.get('id'); // ID del viaje desde la URL
+
     if (viajeId) {
       this.viajeActual = await this.firestoreService.getViajeActual(viajeId);
       if (this.viajeActual?.conductorCorreo) {
@@ -50,9 +51,21 @@ export class ViajeActualPage implements OnInit, OnDestroy {
       return;
     }
 
-    // Iniciar el temporizador solo si el estado es "pendiente"
-    if (this.viajeActual.estado === 'pendiente') {
-      this.iniciarTemporizador();
+    console.log('Estado del viaje al cargar:', this.viajeActual.estado);
+
+    // Manejo según el estado del viaje
+    switch (this.viajeActual.estado) {
+      case 'pendiente':
+        this.iniciarTemporizador(); // Inicia temporizador si está pendiente
+        break;
+      case 'aceptado':
+        // Si ya está activo, permanece en la vista
+        await this.mostrarMensaje('El viaje ya está en progreso.');
+        break;
+      default:
+        console.warn('Estado del viaje desconocido:', this.viajeActual.estado);
+        await this.mostrarMensaje('El estado del viaje no es válido.');
+        this.navController.navigateRoot('/listado-de-viajes');
     }
   }
 
@@ -75,6 +88,8 @@ export class ViajeActualPage implements OnInit, OnDestroy {
 
     this.intervalo = setInterval(async () => {
       this.tiempoRestante--;
+
+      // Si el contador llega a 0
       if (this.tiempoRestante === 0) {
         this.botonHabilitado = false; // Deshabilitar el botón
         clearInterval(this.intervalo); // Detener el temporizador
@@ -82,10 +97,21 @@ export class ViajeActualPage implements OnInit, OnDestroy {
         // Actualizar el estado del viaje a "activo" en Firestore
         await this.firestoreService.actualizarEstadoViaje(
           this.viajeActual.id,
-          'activo'
+          'aceptado'
         );
-        this.viajeActual.estado = 'activo'; // Actualizar estado local
-        console.log('Estado del viaje actualizado a "activo".');
+        this.viajeActual.estado = 'aceptado'; // Actualizar estado local
+        console.log('Estado del viaje actualizado a "aceptado".');
+      }
+
+      // Si el botón es habilitado por cancelar el viaje
+      if (this.viajeActual.estado === 'pendiente' && this.botonHabilitado) {
+        clearInterval(this.intervalo); // Detener el temporizador
+        this.botonHabilitado = true; // Mantienehabilitado el botón
+        this.tiempoRestante = 10; // Reinicia el contador
+        console.log('El viaje fue cancelado. Estado: pendiente.');
+
+        // Redirigir al listado de viajes
+        this.navController.navigateRoot('/listado-de-viajes');
       }
     }, 1000); // Actualización cada segundo
   }
@@ -112,12 +138,19 @@ export class ViajeActualPage implements OnInit, OnDestroy {
       // Mostrar mensaje de éxito
       await this.mostrarMensaje('Viaje cancelado exitosamente.');
 
-      // Reiniciar el temporizador
+      // Detener el temporizador actual
       clearInterval(this.intervalo);
-      this.botonHabilitado = true; // Reactivar el botón
-      this.tiempoRestante = 10; // Reiniciar el contador
 
-      console.log('Estado del viaje actualizado localmente a "pendiente".');
+      // Reactivar el botón y reiniciar el contador
+      this.botonHabilitado = true;
+      this.tiempoRestante = 10;
+
+      // Redirigir al listado de viajes
+      this.navController.navigateRoot('/listado-de-viajes');
+
+      console.log(
+        'Estado del viaje actualizado localmente a "pendiente" y redirigido.'
+      );
     } else {
       console.warn('El temporizador ya finalizó. No se puede cancelar.');
       await this.mostrarMensaje(
