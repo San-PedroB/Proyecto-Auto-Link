@@ -1,9 +1,9 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
+  appId: 'cl.duoc.autolink',
   appName: 'auto-link',
-  webDir: 'www'
+  webDir: 'www',
 };
 
 export default config;
