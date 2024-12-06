@@ -1,4 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
 import {
   FormGroup,
   FormControl,
@@ -14,6 +15,7 @@ import {
 import { FirestoreService } from '../../services/firestore/firestore.service';
 import { ModalLoginComponent } from '../../components/modal-login/modal-login.component';
 import { GuardarCorreoService } from 'src/app/services/guardar-correo.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -34,7 +36,8 @@ export class LoginPage implements OnInit {
     private modalController: ModalController,
     private firestoreService: FirestoreService,
     private animationCtrl: AnimationController,
-    private guardarCorreoService: GuardarCorreoService // Inyecta el AuthService aquí
+    private guardarCorreoService: GuardarCorreoService,
+    private authService: AuthService
   ) {
     this.formularioLogin = this.fb.group({
       email: new FormControl('', [Validators.required, Validators.email]),
@@ -104,6 +107,10 @@ export class LoginPage implements OnInit {
       cssClass: 'custom-modal-class',
     });
     return await modal.present();
+  }
+
+  async iniciarSesionConGoogle() {
+    await this.authService.iniciarSesionConGoogle(); // Llama al servicio con el nuevo nombre
   }
 
   ionViewWillEnter() {
